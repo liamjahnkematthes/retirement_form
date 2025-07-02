@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retirement Insight Form</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+    body {
+      margin: 0;
+      padding: 2rem;
+      font-family: 'Inter', sans-serif;
+      background: #f0f2f5;
+      color: #1e2a45;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .card {
+      max-width: 640px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .logo {
+      display: block;
+      max-width: 160px;
+      margin: 0 auto 2rem;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 18px;
+    }
+    .field {
+      margin-bottom: 1.5rem;
+    }
+    input[type="text"], input[type="email"], input[type="tel"], select, textarea {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.125rem;
+      border: 2px solid #ccd1da;
+      border-radius: 6px;
+      background: #fcfcfc;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 100px;
+    }
+    select {
+      font-size: 18px;
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: #e1e4e8;
+      outline: none;
+      accent-color: #2a73d2;
+      margin-top: 0.5rem;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #2a73d2;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+    .slider-value {
+      text-align: right;
+      font-size: 14px;
+      margin-top: 0.25rem;
+      color: #444;
+    }
+    .generate-btn {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+      background-color: #2a73d2;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 1rem;
+    }
+    .generate-btn:hover {
+      background-color: #225bb5;
+    }
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 999;
+      text-align: center;
+      padding: 1rem;
+    }
+    #loadingOverlay .spinner {
+      border: 4px solid rgba(0,0,0,0.1);
+      border-top: 4px solid #2a73d2;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+    #loadingTip {
+      font-size: 16px;
+      max-width: 80%;
+      line-height: 1.4;
+    }
+    #encouragement {
+      color: #2a73d2;
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    #summaryText {
+      background: #fdfdfd;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      white-space: pre-line;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #insightContainer, #followUpWrapper {
+      width: 100%;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    #followUpWrapper .field,
+    #insightContainer .field {
+      margin-bottom: 1.5rem;
+      padding: 0;
+    }
+    #followUpQuestions {
+      padding-left: 1.5rem;
+      list-style-type: decimal;
+      font-size: 18px;
+      line-height: 1.6;
+      margin: 0 0 1.5rem 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+    <div id="loadingTip">Tip: Even small early contributions can double in 20 years!</div>
+  </div>
+
+  <div class="card">
+    <img class="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdpOB-6Tz3kYJsMfhrs7LJF05khXT3Zl6YUg&s" alt="E.H. Howard Logo">
+    <form id="retirementForm" autocomplete="on">
+      <div class="field">
+        <label for="Name">Your Name</label>
+        <input type="text" id="Name" name="Name" required />
+      </div>
+
+      <div class="field">
+        <label for="Age">Your Age</label>
+        <input type="range" id="Age" name="Age" min="18" max="80" value="30" oninput="ageVal.innerText=this.value" />
+        <div class="slider-value">Age: <span id="ageVal">30</span></div>
+      </div>
+
+      <div class="field">
+        <label for="Income">Annual Income ($)</label>
+        <input type="range" id="Income" name="Income" min="10000" max="300000" step="1000" value="50000" oninput="incomeVal.innerText=Number(this.value).toLocaleString()" />
+        <div class="slider-value">$<span id="incomeVal">50,000</span></div>
+      </div>
+
+      <div class="field">
+        <label for="Savings">Retirement Savings ($)</label>
+        <input type="range" id="Savings" min="0" max="100" step="1" value="20"
+          oninput="let val = Math.round(((Math.pow(5, this.value / 30) - 1) * 15000) / 100) * 100;
+                   savingsVal.innerText = val.toLocaleString();
+                   document.getElementById('RealSavings').value = val;" />
+        <div class="slider-value">$<span id="savingsVal">100,000</span></div>
+        <input type="hidden" id="RealSavings" name="Savings" />
+      </div>
+
+      <div class="field">
+        <label for="RetireAge">Desired Retirement Age</label>
+        <input type="range" id="RetireAge" name="RetireAge" min="50" max="80" value="60" oninput="retireVal.innerText=this.value" />
+        <div class="slider-value">Age: <span id="retireVal">60</span></div>
+      </div>
+
+      <div class="field">
+        <label for="lifestyle">Lifestyle Goal</label>
+        <select id="lifestyle" name="lifestyle" required>
+          <option value="modest">Modest</option>
+          <option value="comfortable">Comfortable</option>
+          <option value="luxury">Luxury</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="userPhone">Phone (required)</label>
+        <input type="tel" id="userPhone" name="userPhone" placeholder="(555) 123-4567" required />
+      </div>
+
+      <button type="submit" class="generate-btn">Generate My Insight</button>
+      <input type="text" name="website" id="website" style="display:none;" autocomplete="off" tabindex="-1">
+    </form>
+
+    <div id="insightContainer" class="field" style="display: none;">
+      <label>Your Retirement Insight:</label>
+      <div id="summaryText"></div>
+    </div>
+
+    <div id="followUpWrapper" style="display: none;">
+      <div class="field">
+        <label>Follow-Up Questions:</label>
+        <ol id="followUpQuestions"></ol>
+      </div>
+
+      <div id="encouragement">You're doing great — 1 more answer to go!</div>
+
+      <div id="followUpForm" style="margin-top: 2rem;">
+        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; color: #1e2a45;">
+          📬 Your Personalized Retirement Plan Awaits
+        </h3>
+
+        <div class="field">
+          <label for="response1">Answer 1 (Optional)</label>
+          <textarea id="response1" placeholder="Example: I'm saving 10% of my income, but I’m not sure if it’s enough."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="response2">Answer 2 (Optional)</label>
+          <textarea id="response2" placeholder="Example: I’m thinking about opening a Roth IRA, but not sure when."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="userEmail">Your Email (No spam, just a plan)</label>
+          <input type="email" id="userEmail" name="userEmail" placeholder="you@example.com" required />
+        </div>
+
+        <div class="field">
+          <label for="userPhoneConfirm">Phone, no spam calls</label>
+          <input type="tel" id="userPhoneConfirm" name="userPhoneConfirm" placeholder="(555) 123-4567" required />
+        </div>
+
+        <button id="submitFollowUps" class="generate-btn">Send Me Help</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('retirementForm');
+    const overlay = document.getElementById('loadingOverlay');
+    const tipEl = document.getElementById('loadingTip');
+    const tips = [
+      'Even small contributions now can double in 20 years.',
+      'Max out your 401(k) match—instant 100% return!',
+      'Rebalance annually to stay on-track with your goals.',
+      'Delay Social Security for ~8% extra per year.',
+      'Review your allocation every 2 years for risk comfort.'
+    ];
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      overlay.style.display = 'flex';
+      let idx = 0;
+      tipEl.innerText = tips[idx];
+      const interval = setInterval(() => {
+        idx = (idx + 1) % tips.length;
+        tipEl.innerText = tips[idx];
+      }, 4000);
+
+      const formData = new FormData(form);
+      formData.set("Savings", document.getElementById("RealSavings").value);
+      const payload = Object.fromEntries(formData.entries());
+
+      try {
+        const res = await fetch('https://liammatthes.app.n8n.cloud/webhook/Retirement-form', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        const { summary, questions } = Array.isArray(data) ? data[0] : data;
+
+        document.getElementById('summaryText').innerText = summary || '';
+        document.getElementById('insightContainer').style.display = 'block';
+
+        const qList = document.getElementById('followUpQuestions');
+        if (qList && Array.isArray(questions)) {
+          qList.innerHTML = '';
+          questions.forEach(q => {
+            const li = document.createElement('li');
+            li.innerText = q;
+            qList.appendChild(li);
+          });
+          document.getElementById('followUpWrapper').style.display = 'block';
+        }
+
+        clearInterval(interval);
+        overlay.style.display = 'none';
+      } catch (err) {
+        clearInterval(interval);
+        overlay.style.display = 'none';
+        console.error('❌ Error:', err);
+        alert('Error generating insight; please try again.');
+      }
+    });
+
+    document.getElementById('submitFollowUps').addEventListener('click', async () => {
+      const botTrap = document.getElementById('website').value;
+      if (botTrap) return;
+
+      const answer1 = document.getElementById('response1').value.trim();
+      const answer2 = document.getElementById('response2').value.trim();
+      const email = document.getElementById('userEmail').value.trim();
+      const phoneInput = document.getElementById('userPhoneConfirm') || document.getElementById('userPhone');
+      const phone = phoneInput?.value || '';
+      const savings = parseFloat(document.getElementById('RealSavings').value) || 0;
+
+      if (!email) {
+        alert('Please enter your email so we can send your plan.');
+        return;
+      }
+
+      try {
+        const res = await fetch('https://liammatthes.app.n8n.cloud/webhook/1f0ba9d4-502d-4a60-b4e9-ee7e1d9a1040', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            answer1: answer1 || null,
+            answer2: answer2 || null,
+            email,
+            phone,
+            name: document.getElementById('Name').value,
+            age: document.getElementById('Age').value,
+            income: document.getElementById('Income').value,
+            savings,
+            retireAge: document.getElementById('RetireAge').value,
+            lifestyle: document.getElementById('lifestyle').value,
+            summary: document.getElementById('summaryText').innerText,
+            timestamp: new Date().toISOString()
+          })
+        });
+
+        if (res.ok) {
+          alert('✅ Your retirement plan is on the way!');
+        } else {
+          alert('❌ Submission failed. Please try again.');
+        }
+      } catch (err) {
+        console.error('❌ Follow-up error:', err);
+        alert('Could not send your answers. Try again later.');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
