@@ -51,7 +51,8 @@
       min-height: 100px;
     }
     select {
-      font-size: 18px;
+      font-size: 20px;
+      font-weight: 600;
     }
     input[type="range"] {
       -webkit-appearance: none;
@@ -74,9 +75,10 @@
     }
     .slider-value {
       text-align: right;
-      font-size: 14px;
+      font-size: 18px;
+      font-weight: 600;
       margin-top: 0.25rem;
-      color: #444;
+      color: #1e2a45;
     }
     .generate-btn {
       display: block;
@@ -169,7 +171,7 @@
     <form id="retirementForm" autocomplete="on">
       <div class="field">
         <label for="Name">Your Name</label>
-        <input type="text" id="Name" name="Name" required />
+        <input type="text" id="Name" name="Name" placeholder="e.g. Taylor Swift" required />
       </div>
 
       <div class="field">
@@ -211,7 +213,24 @@
 
       <div class="field">
         <label for="userPhone">Phone (required)</label>
-        <input type="tel" id="userPhone" name="userPhone" placeholder="(555) 123-4567" required />
+        <div style="display: flex; gap: 0.5rem;">
+          <select id="countryCode" name="countryCode" style="width: 120px; flex-shrink: 0;">
+            <option value="+1">🇺🇸 +1</option>
+            <option value="+44">🇬🇧 +44</option>
+            <option value="+33">🇫🇷 +33</option>
+            <option value="+49">🇩🇪 +49</option>
+            <option value="+39">🇮🇹 +39</option>
+            <option value="+34">🇪🇸 +34</option>
+            <option value="+31">🇳🇱 +31</option>
+            <option value="+32">🇧🇪 +32</option>
+            <option value="+41">🇨🇭 +41</option>
+            <option value="+43">🇦🇹 +43</option>
+            <option value="+61">🇦🇺 +61</option>
+            <option value="+64">🇳🇿 +64</option>
+            <option value="+1">🇨🇦 +1</option>
+          </select>
+          <input type="tel" id="userPhone" name="userPhone" placeholder="555-123-4567" required style="flex: 1;" />
+        </div>
       </div>
 
       <button type="submit" class="generate-btn">Generate My Insight</button>
@@ -251,11 +270,6 @@
           <input type="email" id="userEmail" name="userEmail" placeholder="you@example.com" required />
         </div>
 
-        <div class="field">
-          <label for="userPhoneConfirm">Phone, no spam calls</label>
-          <input type="tel" id="userPhoneConfirm" name="userPhoneConfirm" placeholder="(555) 123-4567" required />
-        </div>
-
         <button id="submitFollowUps" class="generate-btn">Send Me Help</button>
       </div>
     </div>
@@ -263,6 +277,61 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // Classic celebrity names boomers and Gen X would recognize and love
+    const celebrities = [
+      // Classic Boomers (60s-80s icons)
+      'Paul McCartney', 'Barbra Streisand', 'Robert De Niro', 'Meryl Streep',
+      'Harrison Ford', 'Diane Keaton', 'Al Pacino', 'Jane Fonda',
+      'Robert Redford', 'Sally Field', 'Jack Nicholson', 'Goldie Hawn',
+      'Dustin Hoffman', 'Cher', 'Warren Beatty', 'Faye Dunaway',
+      'Gene Hackman', 'Shirley MacLaine', 'Clint Eastwood', 'Helen Mirren',
+      'Michael Douglas', 'Susan Sarandon', 'Morgan Freeman', 'Jessica Lange',
+      'Kevin Costner', 'Glenn Close', 'Sean Connery', 'Kathleen Turner',
+      'John Travolta', 'Sigourney Weaver', 'Richard Gere', 'Sissy Spacek',
+      // Additional Boomer legends
+      'Sylvester Stallone', 'Diane Sawyer', 'Steven Spielberg', 'Bette Midler',
+      'Robin Williams', 'Whoopi Goldberg', 'Danny DeVito', 'Kathy Bates',
+      'Billy Joel', 'Elton John', 'Diana Ross', 'Dolly Parton',
+      'Bruce Springsteen', 'Tina Turner', 'Stevie Nicks', 'Rod Stewart',
+      // Gen X favorites (80s-90s stars)
+      'Tom Cruise', 'Julia Roberts', 'Denzel Washington', 'Michelle Pfeiffer',
+      'Kevin Bacon', 'Meg Ryan', 'Matthew Broderick', 'Molly Ringwald',
+      'Tom Hanks', 'Sandra Bullock', 'Keanu Reeves', 'Winona Ryder',
+      'Will Smith', 'Jennifer Aniston', 'Brad Pitt', 'Gwyneth Paltrow',
+      'George Clooney', 'Angelina Jolie', 'Leonardo DiCaprio', 'Drew Barrymore',
+      'Jim Carrey', 'Cameron Diaz', 'Ben Stiller', 'Jennifer Lopez',
+      'Matt Damon', 'Reese Witherspoon', 'Owen Wilson', 'Sarah Jessica Parker'
+    ];
+    
+    const nameInput = document.getElementById('Name');
+    
+    // Set initial random celebrity
+    const randomCelebrity = celebrities[Math.floor(Math.random() * celebrities.length)];
+    nameInput.placeholder = `e.g. ${randomCelebrity}`;
+    
+    // Change placeholder every 3 seconds when field is empty
+    let placeholderInterval = setInterval(() => {
+      if (nameInput.value === '') {
+        const newCelebrity = celebrities[Math.floor(Math.random() * celebrities.length)];
+        nameInput.placeholder = `e.g. ${newCelebrity}`;
+      }
+    }, 3000);
+    
+    // Stop changing placeholder when user starts typing
+    nameInput.addEventListener('input', () => {
+      if (nameInput.value !== '') {
+        clearInterval(placeholderInterval);
+      } else {
+        // Restart if they clear the field
+        placeholderInterval = setInterval(() => {
+          if (nameInput.value === '') {
+            const newCelebrity = celebrities[Math.floor(Math.random() * celebrities.length)];
+            nameInput.placeholder = `e.g. ${newCelebrity}`;
+          }
+        }, 3000);
+      }
+    });
+
     const form = document.getElementById('retirementForm');
     const overlay = document.getElementById('loadingOverlay');
     const tipEl = document.getElementById('loadingTip');
@@ -329,8 +398,8 @@
       const answer1 = document.getElementById('response1').value.trim();
       const answer2 = document.getElementById('response2').value.trim();
       const email = document.getElementById('userEmail').value.trim();
-      const phoneInput = document.getElementById('userPhoneConfirm') || document.getElementById('userPhone');
-      const phone = phoneInput?.value || '';
+      const phone = document.getElementById('userPhone').value || '';
+      const countryCode = document.getElementById('countryCode').value || '+1';
       const savings = parseFloat(document.getElementById('RealSavings').value) || 0;
 
       if (!email) {
@@ -346,7 +415,7 @@
             answer1: answer1 || null,
             answer2: answer2 || null,
             email,
-            phone,
+            phone: countryCode + phone,
             name: document.getElementById('Name').value,
             age: document.getElementById('Age').value,
             income: document.getElementById('Income').value,
